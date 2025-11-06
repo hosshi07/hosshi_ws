@@ -1,5 +1,6 @@
 import rclpy
 from rclpy.node import Node
+#使うサーバーのメッセージの型
 from happy_interfaces.srv import Whisper, Piper
 
 
