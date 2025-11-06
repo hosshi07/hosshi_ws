@@ -65,9 +65,9 @@ importのあとは当然使うsrvファイルを指定している. 拡張子は
 初期化のメゾット`__init__`には使うモジュールをクライアント関数を用いて指定する．  
 
 ```py
-self.tts_srv = self.create_client(Piper, '/piper')
+self.tts_srv = self.create_client(Piper, '/tts/piper')
 #ウィスパー（音声聞き入れ）のサーバー指定
-self.stt_srv = self.create_client(Whisper, '/whisper_service')
+self.stt_srv = self.create_client(Whisper, '/stt/whisper_service')
 ```
 
 必要な引数は最初にメッセージの型，次にサーバーの名前である．  

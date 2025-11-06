@@ -8,9 +8,9 @@ class SimpleClient(Node):
     def __init__(self):
         super().__init__('voice_master')
         #こちらpiper（合成音声）のサーバーを指定
-        self.tts_srv = self.create_client(Piper, '/piper')
+        self.tts_srv = self.create_client(Piper, '/tts/piper')
         #ウィスパー（音声聞き入れ）のサーバー指定
-        self.stt_srv = self.create_client(Whisper, '/whisper_service')
+        self.stt_srv = self.create_client(Whisper, '/stt/whisper_service')
 
     #音声出力のメゾット　上で指定したサーバーにリクエストを送るもの．（今回はレスポンスを使わない）
     def speak_request(self, text):
