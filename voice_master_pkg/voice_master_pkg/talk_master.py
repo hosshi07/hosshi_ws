@@ -1,7 +1,7 @@
 import rclpy
 from rclpy.node import Node
 #使うサーバーのメッセージの型
-from happy_interfaces.srv import Whisper, Piper
+from happy_interfaces.srv import Whisper, Piper, GoToLocation
 
 
 class SimpleClient(Node):
@@ -11,6 +11,16 @@ class SimpleClient(Node):
         self.tts_srv = self.create_client(Piper, '/tts/piper')
         #ウィスパー（音声聞き入れ）のサーバー指定
         self.stt_srv = self.create_client(Whisper, '/stt/whisper_service')
+        
+        self.nav_srv = self.create_client(GoToLocation, '/go_to_location')
+    
+    
+    def go_nav(self, location):
+        request = GoToLocation.Request()
+        request.location = location
+        self.nav_run = self.nav_srv.call_async(request)
+        rclpy.spin_until_future_complete(self, self.nav_fur)
+        return self.nav_run.result()
 
     #音声出力のメゾット　上で指定したサーバーにリクエストを送るもの．（今回はレスポンスを使わない）
     def speak_request(self, text):
@@ -39,9 +49,12 @@ class SimpleClient(Node):
 def main(args=None):
     rclpy.init(args=args)
     simple_client = SimpleClient()     #  クライアンとオブジェクトの生成  （pythonのインスタンス化とほぼ同じ）
+    simple_client.nav_run("entrance_room")   #これでその場所へ行く
+    simple_client.speak_request("hello what your name?") #カッコ内の言葉をしゃべる
     while True:
         #指定したメゾットを呼び出してる．これはウィスパー　このとき文字をreに代入してる
         re = simple_client.whisper_srv().sentences
+        simple_client.go_nav(re)
         #文字起こししたものをターミナルへ表示．
         simple_client.get_logger().info(re)
         if re == 'exit':
