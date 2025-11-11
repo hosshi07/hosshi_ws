@@ -49,7 +49,7 @@ class SimpleClient(Node):
 def main(args=None):
     rclpy.init(args=args)
     simple_client = SimpleClient()     #  クライアンとオブジェクトの生成  （pythonのインスタンス化とほぼ同じ）
-    simple_client.nav_run("entrance_room")   #これでその場所へ行く
+    simple_client.go_nav("entrance_room")   #これでその場所へ行く
     simple_client.speak_request("hello what your name?") #カッコ内の言葉をしゃべる
     while True:
         #指定したメゾットを呼び出してる．これはウィスパー　このとき文字をreに代入してる
