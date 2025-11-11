@@ -1,15 +1,7 @@
 #このパッケージはこのように作った．
 #ros2 pkg create recognition_pkg --build-type ament_python --node-name human_get_node --dependencies rclpy std_msgs sensor_msgs happy_interfaces 
 
-from ultralytics import YOLOWorld, YOLO
-import cv2
-import rclpy
-from cv_bridge import CvBridge
-from rclpy.node import Node
-from custom_msgs.srv import StrBool
-from sensor_msgs.msg import Image
-
-from ultralytics import YOLOWorld
+from ultralytics import YOLO
 import cv2
 import rclpy
 from cv_bridge import CvBridge
@@ -30,8 +22,8 @@ class HumanNode(Node):
         self.img_sub = self.create_subscription(Image, "/camera/color/image_raw", self.get_image, 10)
         #ここでサーバーを建てる…　人間判定
         self.human_srv = self.create_service(SetBool, "/human_get", self.human_get)
-        #yoloモデルを使う
-        self.model = YOLOWorld("yolov8l-world.pt") 
+        #yoloモデルを使う 私はyolo11のnモデルを使う…何があるかはyoloで調べるといいかも．
+        self.model = YOLO("yolo11n.pt") 
 
         
     #imgに画像が入る
@@ -47,7 +39,17 @@ class HumanNode(Node):
     #今回はリクエスとがなく、レスポンスがあるがinitメゾットで指定した以上、下のように書く…
     def human_get(self, request, response):
         #サーバーが起動するとyolo の推定をする‥それがresultに入る
-        results = self.model(source=self.current_frame, conf=0.4)
+        results = self.model(self.current_frame)
+        print(f"認識した物体の数：{results[0].boxes}")
+        
+        response.result = False
+        for r in results:
+            boxes = r.boxes
+            for box in boxes:
+                if int(box.cls) == 0:
+                    response.result = True
+        
+        return response
 
 
 
@@ -57,7 +59,7 @@ class HumanNode(Node):
 def main(args=None):
     print('node_on')
     rclpy.init(args=args)
-    get_node = Humanode()
+    get_node = HumanNode()
 
     try:
         rclpy.spin(get_node)
