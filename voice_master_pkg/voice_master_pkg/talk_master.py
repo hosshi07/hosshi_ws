@@ -19,7 +19,7 @@ class SimpleClient(Node):
         request = GoToLocation.Request()
         request.location = location
         self.nav_run = self.nav_srv.call_async(request)
-        rclpy.spin_until_future_complete(self, self.nav_fur)
+        rclpy.spin_until_future_complete(self, self.nav_run)
         return self.nav_run.result()
 
     #音声出力のメゾット　上で指定したサーバーにリクエストを送るもの．（今回はレスポンスを使わない）
